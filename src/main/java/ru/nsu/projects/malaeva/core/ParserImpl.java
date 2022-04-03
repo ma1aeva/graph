@@ -1,6 +1,7 @@
 package ru.nsu.projects.malaeva.core;
 
 import ru.nsu.projects.malaeva.operation.*;
+import ru.nsu.projects.malaeva.operation.Predicate;
 
 import java.util.*;
 
@@ -88,6 +89,7 @@ public class ParserImpl implements Parser {
             }
             residualOperation = (Operation) stackItem;
             fillOperationSlots(residualOperation);
+            formulaStack.push(residualOperation);
         }
         return residualOperation;
     }
@@ -114,7 +116,7 @@ public class ParserImpl implements Parser {
         //          3. Квантор - одноместная функция
 
         @Override
-        public Formula parseFormula(String formulaString) {
+        public Formula parseFormula(java.lang.String formulaString) {
 
             // Убираем все пробелы
             char[] formulaCharArray = formulaString.replace(" ", "").toCharArray();
@@ -129,7 +131,7 @@ public class ParserImpl implements Parser {
                         throw new ParseFormulaException("Не удаслось распарсить название переменной");
 
                     Quantifier quantifier = (formulaCharArray[currentIndex] == 'A') ? new AnyQuantifier() : new ExistQuantifier();
-                    String variable = new String(formulaCharArray, currentIndex + 1, lastVariableNameLength);
+                    java.lang.String variable = new java.lang.String(formulaCharArray, currentIndex + 1, lastVariableNameLength);
                     quantifier.setVariableName(variable);
                     processOperation(quantifier);
                     currentIndex += lastVariableNameLength + 1;
@@ -173,12 +175,9 @@ public class ParserImpl implements Parser {
                         throw new RuntimeException("Проблема с парсингом предиката, не удалось найти закрывающую скобку");
                     }
 
-                    String predicateName = new String(formulaCharArray, currentIndex, predicateNameLength);
-                    String argumentName = new String(formulaCharArray, currentIndex + predicateNameLength + 1, predicateArgumentNameLength);
-                    Predicate predicate = new Predicate();
-                    predicate.setPredicateName(predicateName);
-                    // TODO подправить
-                    predicate.setArgumentName(argumentName);
+                    java.lang.String predicateName = new java.lang.String(formulaCharArray, currentIndex, predicateNameLength);
+                    java.lang.String argumentName = new java.lang.String(formulaCharArray, currentIndex + predicateNameLength + 1, predicateArgumentNameLength);
+                    Predicate predicate = new Predicate(predicateName, argumentName);
                     processAtom(predicate);
                     currentIndex += predicateNameLength + predicateArgumentNameLength + 2;
                 }

@@ -5,8 +5,8 @@ import java.util.Map;
 public class NegativeOperation extends SingleArgsOperation {
 
     @Override
-    public boolean getValue(Map<String, Boolean> atomsValue) {
-        return false;
+    public boolean getValue(Map<String, Map<String, Boolean>> atomsValue) {
+        return !getArgument().getValue(atomsValue);
     }
 
     @Override
@@ -17,5 +17,10 @@ public class NegativeOperation extends SingleArgsOperation {
     @Override
     public int getPriorityLevel() {
         return 11;
+    }
+
+    @Override
+    protected SingleArgsOperation createOperation() {
+        return new NegativeOperation();
     }
 }

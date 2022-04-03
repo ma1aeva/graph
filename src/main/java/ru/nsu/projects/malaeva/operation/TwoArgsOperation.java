@@ -2,11 +2,12 @@ package ru.nsu.projects.malaeva.operation;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import ru.nsu.projects.malaeva.core.Formula;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Setter
@@ -34,5 +35,29 @@ public abstract class TwoArgsOperation extends AbstractOperation {
         Set<String> constants = new HashSet<>(firstOperand.getConstants());
         constants.addAll(secondOperand.getConstants());
         return constants;
+    }
+
+    @Override
+    public Formula withoutQuantifiers(Set<String> constants, Set<String> specialConstants) {
+        TwoArgsOperation twoArgsOperation = createOperation();
+        twoArgsOperation.setFirstOperand(getFirstOperand().withoutQuantifiers(constants, specialConstants));
+        twoArgsOperation.setSecondOperand(getSecondOperand().withoutQuantifiers(constants, specialConstants));
+        return twoArgsOperation;
+    }
+
+    protected abstract TwoArgsOperation createOperation();
+
+    @Override
+    public Formula replaceVariables(String variable, String replacement) {
+        TwoArgsOperation twoArgsOperation = createOperation();
+        twoArgsOperation.setFirstOperand(getFirstOperand().replaceVariables(variable, replacement));
+        twoArgsOperation.setSecondOperand(getSecondOperand().replaceVariables(variable, replacement));
+        return twoArgsOperation;
+    }
+
+    @Override
+    public void getAtoms(@NotNull Map<String, Set<String>> atoms) {
+        getFirstOperand().getAtoms(atoms);
+        getSecondOperand().getAtoms(atoms);
     }
 }
