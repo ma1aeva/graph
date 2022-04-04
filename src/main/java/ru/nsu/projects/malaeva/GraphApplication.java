@@ -1,14 +1,15 @@
 package ru.nsu.projects.malaeva;
 
-import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxGraph;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 import ru.nsu.projects.malaeva.core.*;
 import ru.nsu.projects.malaeva.sdnf.MultipleConjunction;
 import ru.nsu.projects.malaeva.sdnf.TreeNode;
@@ -20,14 +21,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class Main {
+public class GraphApplication extends Application {
 
-    public static void main(String[] args) throws IOException {
+    @Override
+    public void start(Stage primaryStage) throws Exception{
 
         // Парсинг формулы
         Parser parser = new ParserImpl();
-        Formula formula1 = parser.parseFormula("Ax(f(x))");
-        Formula formula2 = parser.parseFormula("Ax(f(x))");
+        Formula formula1 = parser.parseFormula("Ax(f(x) @ f(b) & f(c))");
+        Formula formula2 = parser.parseFormula("Ay(f(a) & f(b) @ f(c))");
+        Formula formula3 = parser.parseFormula("f(a) @ f(b) @ f(c)");
+        Formula formula4 = parser.parseFormula("!f(a) @ f(b) @ !f(c)");
 
         // Собираем константы
         Set<String> constants = formula1.getConstants();
@@ -35,21 +39,27 @@ public class Main {
         Set<String> specialsConstants = Set.of("a1", "a2");
         Formula withoutQuantifiers1 = formula1.withoutQuantifiers(constants, specialsConstants);
         Formula withoutQuantifiers2 = formula2.withoutQuantifiers(constants, specialsConstants);
+        Formula withoutQuantifiers3 = formula3.withoutQuantifiers(constants, specialsConstants);
+        Formula withoutQuantifiers4 = formula4.withoutQuantifiers(constants, specialsConstants);
 
 
         // Составление и заполнение таблиц истинности
         ConfidenceTable confidenceTable1 = new ConfidenceTableImpl();
         ConfidenceTable confidenceTable2 = new ConfidenceTableImpl();
+        ConfidenceTable confidenceTable3 = new ConfidenceTableImpl();
+        ConfidenceTable confidenceTable4 = new ConfidenceTableImpl();
 
         confidenceTable1.fillTable(withoutQuantifiers1);
         confidenceTable2.fillTable(withoutQuantifiers2);
-
-        System.out.println(confidenceTable1.getPredicates());
-        System.out.println(confidenceTable2.getPredicates());
+        confidenceTable3.fillTable(withoutQuantifiers3);
+        confidenceTable4.fillTable(withoutQuantifiers4);
 
         // Получение сднф
         Set<MultipleConjunction> multipleConjunctionList1 = confidenceTable1.getSdnfConjunctions();
         Set<MultipleConjunction> multipleConjunctionList2 = confidenceTable2.getSdnfConjunctions();
+        Set<MultipleConjunction> multipleConjunctionList3 = confidenceTable3.getSdnfConjunctions();
+        Set<MultipleConjunction> multipleConjunctionList4 = confidenceTable4.getSdnfConjunctions();
+
 
         // Получение мегаформулы (предполагаем, что формулы одной размерности)
         Set<MultipleConjunction> megaformula = confidenceTable1.getAllConjunctions();
@@ -60,11 +70,13 @@ public class Main {
         TreeNode head = new TreeNode(megaformula);
         head.insertInto(new TreeNode(multipleConjunctionList1));
         head.insertInto(new TreeNode(multipleConjunctionList2));
+        head.insertInto(new TreeNode(multipleConjunctionList3));
+        head.insertInto(new TreeNode(multipleConjunctionList4));
 
 
         megaformula.stream()
-                        .map(multipleConjunction -> new TreeNode(Set.of(multipleConjunction)))
-                                .forEach(head::insertInto);
+                .map(multipleConjunction -> new TreeNode(Set.of(multipleConjunction)))
+                .forEach(head::insertInto);
 
 //        System.out.println("[1] >= [2]: " + multipleConjunctionList1.containsAll(multipleConjunctionList2));
 //        System.out.println("[1] <= [2]: " + multipleConjunctionList2.containsAll(multipleConjunctionList1));
@@ -77,36 +89,21 @@ public class Main {
 //        System.out.println(confidenceTable1.getPredicates().equals(confidenceTable2.getPredicates()));
 
 
-        DefaultDirectedGraph<TreeNode, DefaultEdge> g = new DefaultDirectedGraph<>(DefaultEdge.class);
-
-//        g1.addVertex(head);
-
-
-//        String x1 = "x1lol";
-//        String x2 = "x2";
-//        String x3 = "x3";
-//
-//        g.addVertex(x1);
-//        g.addVertex(x2);
-//        g.addVertex(x3);
-//
-//        g.addEdge(x1, x2);
-//        g.addEdge(x2, x3);
-//        g.addEdge(x3, x1);
-
+        DefaultDirectedGraph<TreeNode, CustomEdge> g = new DefaultDirectedGraph<>(CustomEdge.class);
         head.initGraph(g);
 
-        JGraphXAdapter<TreeNode, DefaultEdge> graphAdapter = new JGraphXAdapter<>(g);
+
+        JGraphXAdapter<TreeNode, CustomEdge> graphAdapter = new JGraphXAdapter<>(g);
+        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter, false, false);
+        graphAdapter.getVertexToCellMap();
+        layout.execute(graphAdapter.getDefaultParent());
 
 //        graphAdapter.getStylesheet().setDefaultEdgeStyle(edgeStyle)
 
-//        graphAdapter.getStylesheet().setDefaultEdgeStyle();
 
 //        mxIGraphLayout layout = new FormatEdges.ExtendedCompactTreeLayout(graphAdapter);
-//        layout.execute(graphAdapter.getDefaultParent());
-
-        mxIGraphLayout layout = new mxCompactTreeLayout(graphAdapter);
         layout.execute(graphAdapter.getDefaultParent());
+
 
 //        Map<String, Object> edgeStyle = graphAdapter.getStylesheet().setDefaultEdgeStyle();
 //        System.out.println(edgeStyle);
@@ -116,9 +113,11 @@ public class Main {
 //        mxIGraphLayout layout = new mxCircleLayout(graphAdapter);
 //        layout.execute(graphAdapter.getDefaultParent());
 
-        BufferedImage image = mxCellRenderer.createBufferedImage(graphAdapter, null, 1, Color.WHITE, false, null);
+        BufferedImage image = mxCellRenderer.createBufferedImage(graphAdapter, null, 5, Color.WHITE, false, null);
 //        System.out.println(mxCellRenderer.createSvgDocument(graphAdapter, null, 2, Color.WHITE, null));
 //        org.w3c.dom.Document doc = mxCellRenderer.createSvgDocument(graphAdapter, null, 2, Color.WHITE, null);
+
+//        Image image = SwingFXUtils.toFXImage(capture, null);
 
         File imgFile = new File("graph.png");
         ImageIO.write(image, "PNG", imgFile);
@@ -131,5 +130,18 @@ public class Main {
 //        ConfidenceTable confidenceTable = new ConfidenceTableImpl();
 //        confidenceTable.fillTable(testFormula);
 //        System.out.println(confidenceTable.getSdnfConjunctions());
+
+
+
+
+
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/mainView.fxml")));
+        primaryStage.setTitle("MVC Example App");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) throws IOException {
+        launch(args);
     }
 }

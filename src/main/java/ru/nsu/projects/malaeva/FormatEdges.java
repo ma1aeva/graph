@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxEdgeLabelLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
@@ -25,6 +26,7 @@ public class FormatEdges extends JFrame {
         edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.NONE);
 
         graph.getModel().beginUpdate();
+
         try {
             // Create vertexes
             Object vertex1 = graph.insertVertex(parent, null, "01",  10, 20, 80, 30);
@@ -33,8 +35,8 @@ public class FormatEdges extends JFrame {
             Object vertex4 = graph.insertVertex(parent, null, "B", 115, 200, 50, 50, "shape=ellipse");
 
             // Connect
-            mxICell edge1 = ((mxICell)(graph.insertEdge(parent, "01", "test", vertex1, vertex2)));
-            mxICell edge2 = ((mxICell)(graph.insertEdge(parent, "02", "test", vertex1, vertex3)));
+            mxICell edge1 = ((mxICell)(graph.insertEdge(parent, null, "test", vertex1, vertex2)));
+            mxICell edge2 = ((mxICell)(graph.insertEdge(parent, null, "test", vertex1, vertex3)));
 
             // Layout
             mxIGraphLayout layout = new ExtendedCompactTreeLayout(graph);
@@ -52,7 +54,7 @@ public class FormatEdges extends JFrame {
     {
         FormatEdges frame = new FormatEdges();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 320);
+//        frame.setSize(400, 320);
         frame.setVisible(true);
     }
 

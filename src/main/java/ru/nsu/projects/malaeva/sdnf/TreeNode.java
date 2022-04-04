@@ -2,7 +2,7 @@ package ru.nsu.projects.malaeva.sdnf;
 
 import lombok.RequiredArgsConstructor;
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
+import ru.nsu.projects.malaeva.CustomEdge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,8 @@ public class TreeNode {
 
 
     public boolean insertInto(TreeNode newNode) {
+        if (equals(newNode.multipleConjunctionSet))
+            return true;
         if (isSubformula(newNode.multipleConjunctionSet)) {
             boolean deep = false;
             for (TreeNode child : children) {
@@ -40,23 +42,27 @@ public class TreeNode {
                 .collect(Collectors.joining(" or "));
     }
 
-    private void initVertex(Graph<TreeNode, DefaultEdge> graph) {
+    private void initVertex(Graph<TreeNode, CustomEdge> graph) {
         graph.addVertex(this);
         for (TreeNode child : children) {
             child.initVertex(graph);
         }
     }
 
-    private void addEdges(Graph<TreeNode, DefaultEdge> graph) {
+    private void addEdges(Graph<TreeNode, CustomEdge> graph) {
         for (TreeNode child : children) {
             graph.addEdge(this, child);
             child.addEdges(graph);
         }
     }
 
-    public void initGraph(Graph<TreeNode, DefaultEdge> graph) {
+    public void initGraph(Graph<TreeNode, CustomEdge> graph) {
         initVertex(graph);
         addEdges(graph);
+    }
+
+    private boolean equals(Set<MultipleConjunction> newNodeMultipleConjunction) {
+        return multipleConjunctionSet.equals(newNodeMultipleConjunction);
     }
 
     private boolean isSubformula(Set<MultipleConjunction> newNodeMultipleConjunction) {

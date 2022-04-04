@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+
+
+<?import javafx.scene.layout.VBox?>
+<Pane maxHeight="-Infinity" fx:id="pane" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="293.0" prefWidth="467.0" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="ru.nsu.projects.malaeva.MainController" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox fx:id="vbox">
+
+    </VBox>
+      <Button layoutX="361.0" layoutY="232.0" mnemonicParsing="false" text="Build graph"/>
+      <TextField layoutX="43.0" layoutY="60.0" />
+      <TextField layoutX="209.0" layoutY="60.0" prefHeight="26.0" prefWidth="83.0" />
+      <Button onAction="#addNextFields" layoutX="319.0" layoutY="60.0" minWidth="34.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="70.0" text="Add field" />
+      <ButtonBar layoutX="14.0" layoutY="228.0" prefHeight="40.0" prefWidth="200.0">
+        <buttons>
+          <Button mnemonicParsing="false" text="∀" />
+            <Button mnemonicParsing="false" text="∃" />
+            <Button mnemonicParsing="false" text="V" />
+            <Button mnemonicParsing="false" text="∧" />
+        </buttons>
+      </ButtonBar>
+</Pane>
