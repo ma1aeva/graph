@@ -41,7 +41,7 @@ public abstract class Quantifier extends SingleArgsOperation {
     }
 
     // Метод для получение подформул, с измененными на константы переменными
-    public List<Formula> getSubformulaVariablesReplacement(Set<java.lang.String> constants, Set<java.lang.String> specialConstants) {
+    public List<Formula> getSubformulaVariablesReplacement(Set<String> constants, Set<String> specialConstants) {
         return Stream.concat(
                 constants.stream().map(constant -> getArgument().replaceVariables(getVariableName(), constant)),
                 specialConstants.stream().map(constant -> getArgument().replaceVariables(getVariableName(), constant))

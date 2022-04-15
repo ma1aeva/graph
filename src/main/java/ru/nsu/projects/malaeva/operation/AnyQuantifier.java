@@ -17,7 +17,7 @@ public class AnyQuantifier extends Quantifier {
 
     @Override
     public String toString() {
-        return "A" + getVariableName() + " (" + getArgument().toString() + ")";
+        return "∀" + getVariableName() + " (" + getArgument().toString() + ")";
     }
 
     @Override

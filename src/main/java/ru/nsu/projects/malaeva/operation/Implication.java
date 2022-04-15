@@ -2,25 +2,24 @@ package ru.nsu.projects.malaeva.operation;
 
 import java.util.Map;
 
-public class Disjunction extends TwoArgsOperation {
-
+public class Implication extends TwoArgsOperation {
     @Override
     public boolean getValue(Map<String, Map<String, Boolean>> atomsValue) {
-        return getFirstOperand().getValue(atomsValue) || getSecondOperand().getValue(atomsValue);
+        return !getFirstOperand().getValue(atomsValue) || getSecondOperand().getValue(atomsValue);
     }
 
     @Override
     public java.lang.String toString() {
-        return "(" + getFirstOperand().toString() + " v " + getSecondOperand().toString() + ")";
+        return "(" + getFirstOperand().toString() + " → " + getSecondOperand().toString() + ")";
     }
 
     @Override
     public int getPriorityLevel() {
-        return 5;
+        return 3;
     }
 
     @Override
     protected TwoArgsOperation createOperation() {
-        return new Disjunction();
+        return new Implication();
     }
 }

@@ -12,7 +12,7 @@ public class Conjunction extends TwoArgsOperation {
 
     @Override
     public java.lang.String toString() {
-        return "(" + getFirstOperand().toString() + " & " + getSecondOperand().toString() + ")";
+        return "(" + getFirstOperand().toString() + " ∧ " + getSecondOperand().toString() + ")";
     }
 
     @Override

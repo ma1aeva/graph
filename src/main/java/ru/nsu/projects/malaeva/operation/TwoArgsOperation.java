@@ -56,8 +56,8 @@ public abstract class TwoArgsOperation extends AbstractOperation {
     }
 
     @Override
-    public void getAtoms(@NotNull Map<String, Set<String>> atoms) {
-        getFirstOperand().getAtoms(atoms);
-        getSecondOperand().getAtoms(atoms);
+    public void fillAtoms(@NotNull Map<String, Set<String>> atoms) {
+        getFirstOperand().fillAtoms(atoms);
+        getSecondOperand().fillAtoms(atoms);
     }
 }

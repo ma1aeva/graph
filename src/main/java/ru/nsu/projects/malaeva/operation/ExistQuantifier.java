@@ -12,7 +12,7 @@ public class ExistQuantifier extends Quantifier {
 
     @Override
     public String toString() {
-        return "E" + getVariableName() + " (" + getArgument().toString() + ")";
+        return "∃" + getVariableName() + " (" + getArgument().toString() + ")";
     }
 
     @Override

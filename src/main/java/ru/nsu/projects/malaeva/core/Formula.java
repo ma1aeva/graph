@@ -12,5 +12,5 @@ public interface Formula {
     Formula withoutQuantifiers(Set<String> constants, Set<String> specialConstants);
     Formula replaceVariables(String variable, String replacement);
     Set<String> getConstants();
-   void getAtoms(@NotNull Map<String, Set<String>> atoms);
+   void fillAtoms(@NotNull Map<String, Set<String>> atoms);
 }

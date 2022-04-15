@@ -5,11 +5,11 @@ import ru.nsu.projects.malaeva.operation.Predicate;
 
 import java.util.*;
 
-public class ParserImpl implements Parser {
+public class StandardParser implements Parser {
     private final Stack<OperationStackItem> operationStack;
     private final Stack<Formula> formulaStack;
 
-    public ParserImpl() {
+    public StandardParser() {
         this.operationStack = new Stack<>();
         this.formulaStack = new Stack<>();
     }
@@ -125,12 +125,12 @@ public class ParserImpl implements Parser {
             while (currentIndex < formulaCharArray.length) {
 
                 // Если прочитанная операция - это квантор
-                if (formulaCharArray[currentIndex] == 'A' || formulaCharArray[currentIndex] == 'E') {
+                if (formulaCharArray[currentIndex] == '∀' || formulaCharArray[currentIndex] == '∃') {
                     int lastVariableNameLength = parseName(formulaCharArray, currentIndex + 1);
                     if (lastVariableNameLength == -1)
-                        throw new ParseFormulaException("Не удаслось распарсить название переменной");
+                        throw new ParseFormulaException("Не удаслось распарсить название переменной.");
 
-                    Quantifier quantifier = (formulaCharArray[currentIndex] == 'A') ? new AnyQuantifier() : new ExistQuantifier();
+                    Quantifier quantifier = (formulaCharArray[currentIndex] == '∀') ? new AnyQuantifier() : new ExistQuantifier();
                     java.lang.String variable = new java.lang.String(formulaCharArray, currentIndex + 1, lastVariableNameLength);
                     quantifier.setVariableName(variable);
                     processOperation(quantifier);
@@ -142,19 +142,21 @@ public class ParserImpl implements Parser {
                 } else if (formulaCharArray[currentIndex] == ')') {
                     processOperation(new ClosingBracket());
                     currentIndex++;
-                } else if (formulaCharArray[currentIndex] == '&') {
+                } else if (formulaCharArray[currentIndex] == '∧') {
                     processOperation(new Conjunction());
                     currentIndex++;
                 } else if (formulaCharArray[currentIndex] == '!') {
                     processOperation(new NegativeOperation());
                     currentIndex++;
-                } else if (formulaCharArray[currentIndex] == '@') {
+                } else if (formulaCharArray[currentIndex] == 'v') {
                     processOperation(new Disjunction());
                     currentIndex++;
-                } // ||
-//            if (formulaCharArray[i] == '>') {} // ->
-
-                else {
+                } else if (formulaCharArray[currentIndex] == '→') {
+                    System.out.println("LOL");
+                    processOperation(new Implication());
+                    currentIndex++;
+                    // иначе это какой-то предикат и мы проверяем структуру xxxx(a1, a2,..., an)
+                } else {
                     int predicateNameLength = parseName(formulaCharArray, currentIndex);
                     if (predicateNameLength == -1) {
                         throw new RuntimeException("Мы попытались распарсить имся предиката, но сразу наткнулись на технический символ");
@@ -181,7 +183,6 @@ public class ParserImpl implements Parser {
                     processAtom(predicate);
                     currentIndex += predicateNameLength + predicateArgumentNameLength + 2;
                 }
-//                 иначе это какой-то предикат и мы проверяем структуру xxxx(a1, a2,..., an)
             }
             return endParsing();
         }

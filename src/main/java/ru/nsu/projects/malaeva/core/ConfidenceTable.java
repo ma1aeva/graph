@@ -7,8 +7,6 @@ import java.util.Set;
 
 public interface ConfidenceTable {
     void fillTable(Formula formula);
-//    boolean isSubformula(ConfidenceTable confidenceTable);
-    boolean comparable(ConfidenceTable confidenceTable);
 
     Map<String, Set<String>> getPredicates();
     int getPredicateCount();

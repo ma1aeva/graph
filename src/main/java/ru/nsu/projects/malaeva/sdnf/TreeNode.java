@@ -1,46 +1,104 @@
 package ru.nsu.projects.malaeva.sdnf;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jgrapht.Graph;
 import ru.nsu.projects.malaeva.CustomEdge;
+import ru.nsu.projects.malaeva.FormulaDTO;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class TreeNode {
+
+    @Getter @Setter
+    private Double probability;
+
+    @Getter @Setter
+    private boolean isAccurate;
+
+    @Getter @Setter
+    private FormulaDTO formulaDTO;
+
     private final Set<MultipleConjunction> multipleConjunctionSet;
-    private List<TreeNode> parents = new ArrayList<>();
-    private List<TreeNode> children = new ArrayList<>();
+    private final Set<TreeNode> children = new HashSet<>();
 
-
-    public boolean insertInto(TreeNode newNode) {
-        if (equals(newNode.multipleConjunctionSet))
-            return true;
-        if (isSubformula(newNode.multipleConjunctionSet)) {
-            boolean deep = false;
-            for (TreeNode child : children) {
-                if (child.insertInto(newNode))
-                    deep = true;
+    public void weight() {
+        double childrenProbabilitySum = children.stream()
+                .filter(node -> node.getProbability() != null)
+                .mapToDouble(TreeNode::getProbability)
+                .sum();
+        double remainder = probability - childrenProbabilitySum;
+        System.out.println(remainder);
+        for (TreeNode child : children) {
+            if (child.getProbability() == null) {
+                child.setProbability(remainder);
+                child.setAccurate(false);
             }
-            if (!deep) {
-                children.add(newNode);
-                return true;
-            }
+            child.weight();
         }
-        return false;
+    }
+
+    public void setProbabilityIfPossible() {
+        if (probability == null && formulaDTO != null) {
+            System.out.println(formulaDTO);
+            System.out.println(formulaDTO.getProbability());
+            probability = formulaDTO.getProbability();
+            isAccurate = true;
+        }
+        children.forEach(TreeNode::setProbabilityIfPossible);
+    }
+
+    public void insertInto(TreeNode newNode) {
+
+        if (equals(newNode)) {
+            return;
+        }
+
+        // Формируем сет нод из детей, которые станут потомками переданной вставляемой ноды
+        Set<TreeNode> newNodeChildrenSet = children.stream()
+                .filter(children -> newNode.isSubformula(children) && !newNode.equals(children))
+                .collect(Collectors.toSet());
+
+        // Формируем сет нод, которые являются родительскими по отношению к вставляемой ноде
+        // В том числе здесь может быть точно такая же нода, поэтому есть проверка вначале
+        Set<TreeNode> superFormulas = children.stream()
+                .filter(children -> children.isSubformula(newNode))
+                .collect(Collectors.toSet());
+
+        // Если в наших потомках нет родителя для всьавляемой ноды, то просто добавляем ее в свои потомки
+        if (superFormulas.isEmpty()) {
+            children.add(newNode);
+        } else {
+            superFormulas.forEach(superFormula -> superFormula.insertInto(newNode));
+        }
+        newNodeChildrenSet.forEach(newNode::insertInto);
+        children.removeAll(newNodeChildrenSet);
     }
 
     @Override
     public String toString() {
-        return multipleConjunctionSet.stream()
+        String formulaString = multipleConjunctionSet.stream()
                 .map(Objects::toString)
                 .map(conjunction -> "(" + conjunction + ")")
-                .collect(Collectors.joining(" or "));
+                .collect(Collectors.joining(" v "));
+        if (probability != null) {
+            String probabilityString;
+            if (isAccurate) {
+                probabilityString = " (" + probability + ")";
+            }
+            else {
+                probabilityString = (probability <= 0) ? " [" + String.format("%1$,.2f", probability) + "; " + 0 + "]" :
+                        " [" + 0 + "; " + String.format("%1$,.2f", probability) + "]";
+            }
+            formulaString += probabilityString;
+            System.out.println(probabilityString);
+        }
+        return formulaString;
     }
+
 
     private void initVertex(Graph<TreeNode, CustomEdge> graph) {
         graph.addVertex(this);
@@ -51,8 +109,13 @@ public class TreeNode {
 
     private void addEdges(Graph<TreeNode, CustomEdge> graph) {
         for (TreeNode child : children) {
-            graph.addEdge(this, child);
-            child.addEdges(graph);
+            if (child.getProbability() != null && this.getProbability() != null) {
+                CustomEdge.ProbabilityRelation relation = (this.getProbability() < child.getProbability() && (
+                        this.isAccurate() && child.isAccurate)) ?
+                        CustomEdge.ProbabilityRelation.INCORRECT : CustomEdge.ProbabilityRelation.CORRECT;
+                graph.addEdge(this, child, new CustomEdge(relation));
+                child.addEdges(graph);
+            }
         }
     }
 
@@ -61,11 +124,11 @@ public class TreeNode {
         addEdges(graph);
     }
 
-    private boolean equals(Set<MultipleConjunction> newNodeMultipleConjunction) {
-        return multipleConjunctionSet.equals(newNodeMultipleConjunction);
+    private boolean isSubformula(TreeNode treeNode) {
+        return multipleConjunctionSet.containsAll(treeNode.multipleConjunctionSet);
     }
 
-    private boolean isSubformula(Set<MultipleConjunction> newNodeMultipleConjunction) {
-        return multipleConjunctionSet.containsAll(newNodeMultipleConjunction);
+    private boolean equals(TreeNode treeNode) {
+        return multipleConjunctionSet.equals(treeNode.multipleConjunctionSet);
     }
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public abstract class SingleArgsOperation extends AbstractOperation {
+public abstract class  SingleArgsOperation extends AbstractOperation {
     private Formula argument;
 
     @Override
@@ -50,7 +50,7 @@ public abstract class SingleArgsOperation extends AbstractOperation {
     }
 
     @Override
-    public void getAtoms(@NotNull Map<String, Set<String>> atoms) {
-        getArgument().getAtoms(atoms);
+    public void fillAtoms(@NotNull Map<String, Set<String>> atoms) {
+        getArgument().fillAtoms(atoms);
     }
 }

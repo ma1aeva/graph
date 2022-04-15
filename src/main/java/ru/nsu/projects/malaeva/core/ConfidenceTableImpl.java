@@ -19,7 +19,7 @@ public class ConfidenceTableImpl implements ConfidenceTable {
         this.formula = formula;
         this.predicates = new HashMap<>();
         // Заполняем предикаты, которые нам известны
-        this.formula.getAtoms(this.predicates);
+        this.formula.fillAtoms(this.predicates);
 
         //TODO проверка на то, есть ли здесь константы
         // Подготавливаем формулу (Убираем кванторы)
@@ -52,9 +52,7 @@ public class ConfidenceTableImpl implements ConfidenceTable {
             }
         }
 
-        //TODO проверить, начинается ли с 0
         // Теперь мы заполняем значения предикатов в основную таблицу и получаем значение формулы при таких вводных
-        System.out.println("-------------");
         for (int row = 0; row < tableRowCount; row++) {
             Map<String, Map<String, Boolean>> predicateValues = new HashMap<>();
             int remainder = row;
@@ -73,24 +71,6 @@ public class ConfidenceTableImpl implements ConfidenceTable {
         }
     }
 
-    public boolean comparable(ConfidenceTable confidenceTable) {
-        // Если имеют разные размерности, то уже не является подформулой
-        if (tableHeader.length != confidenceTable.getPredicateCount()) {
-            return false;
-        }
-
-        Map<String, Set<String>> provedPredicates = confidenceTable.getPredicates();
-        if (!predicates.keySet().equals(provedPredicates.keySet())) {
-            return false;
-        }
-        for (Map.Entry<String, Set<String>> provedPredicate : provedPredicates.entrySet()) {
-            if (!predicates.get(provedPredicate.getKey()).equals(provedPredicate.getValue())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public Set<MultipleConjunction> getSdnfConjunctions() {
         Set<MultipleConjunction> conjunctionList = new HashSet<>();
@@ -100,7 +80,7 @@ public class ConfidenceTableImpl implements ConfidenceTable {
                 for (int column = 0; column < tableHeader.length; column++) {
                     // Копируем предикат из таблицы в конъюнкт
                     Predicate predicateCopy = new Predicate(tableHeader[column]);
-                    predicateCopy.setNegative(tableBody[column][row]);
+                    predicateCopy.setNegative(!tableBody[column][row]);
                     multipleConjunction.getPredicates().add(predicateCopy);
                 }
                 conjunctionList.add(multipleConjunction);

@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import com.mxgraph.layout.mxCompactTreeLayout;
-import com.mxgraph.layout.mxEdgeLabelLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
@@ -73,16 +72,13 @@ public class FormatEdges extends JFrame {
             super.execute(parent);
 
             // Modify the edges to ensure they exit the source cell at the midpoint
-            if(!horizontal)
-            {
+            if(!horizontal) {
                 // get all the vertexes
                 Object[] vertexes = ((mxGraphModel)graph.getModel()).getChildVertices(graph.getModel(), graph.getDefaultParent());
-                for(int i=0; i < vertexes.length; i++)
-                {
+                for(int i=0; i < vertexes.length; i++) {
                     mxICell parentCell = ((mxICell)(vertexes[i]));
                     // For each edge of the vertex
-                    for(int j=0; j < parentCell.getEdgeCount(); j++)
-                    {
+                    for(int j=0; j < parentCell.getEdgeCount(); j++) {
                         mxICell edge = parentCell.getEdgeAt(j);
                         // Only consider edges that are from the cell
                         if(edge.getTerminal(true) != parentCell)

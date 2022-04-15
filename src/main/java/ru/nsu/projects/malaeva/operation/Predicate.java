@@ -25,7 +25,7 @@ public class Predicate implements Atom {
     //TODO подправить функцию хэш кода, эта работает не очень хорошо (непонятно как)
     @Override
     public int hashCode() {
-        return ((int)Math.pow(predicateName.hashCode() % 3333, 2))
+        return ((int)Math.pow(predicateName.hashCode() % 33353, 2))
                 * (argumentName.hashCode() % 5555)  * ((negative) ? -1 : 1);
     }
 
@@ -52,7 +52,7 @@ public class Predicate implements Atom {
     }
 
     @Override
-    public void getAtoms(@NotNull Map<String, Set<String>> atoms) {
+    public void fillAtoms(@NotNull Map<String, Set<String>> atoms) {
         Set<String> predicateArguments;
         if (atoms.get(predicateName) == null) {
             predicateArguments = new HashSet<>();

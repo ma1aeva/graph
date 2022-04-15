@@ -35,6 +35,6 @@ public class MultipleConjunction {
     public String toString() {
         return predicates.stream()
                 .map(Objects::toString)
-                .collect(Collectors.joining(" & "));
+                .collect(Collectors.joining(" ∧ "));
     }
 }
