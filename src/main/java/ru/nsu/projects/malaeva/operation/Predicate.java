@@ -22,7 +22,8 @@ public class Predicate implements Atom {
         return Set.of(argumentName);
     }
 
-    //TODO подправить функцию хэш кода, эта работает не очень хорошо (непонятно как)
+    // TODO подправить функцию хэш кода, эта работает не очень хорошо (я не знаю, как)
+    // Но она важна, за счет нее мы сравниваем предикаты м/у собой
     @Override
     public int hashCode() {
         return ((int)Math.pow(predicateName.hashCode() % 33353, 2))

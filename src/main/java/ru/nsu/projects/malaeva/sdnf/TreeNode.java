@@ -31,12 +31,25 @@ public class TreeNode {
                 .mapToDouble(TreeNode::getProbability)
                 .sum();
         double remainder = probability - childrenProbabilitySum;
-        System.out.println(remainder);
-        for (TreeNode child : children) {
-            if (child.getProbability() == null) {
+
+        List<TreeNode> childrenWithoutProbability = children.stream()
+                .filter(node -> node.getProbability() == null)
+                .toList();
+
+        // Если у нас один потомок с неопределенной вероятностью, то задаем ее как точную
+        if (childrenWithoutProbability.size() == 1) {
+            TreeNode singleChildWithoutProbability = childrenWithoutProbability.get(0);
+            singleChildWithoutProbability.setProbability(remainder);
+            singleChildWithoutProbability.setAccurate(true);
+        }
+        else {
+            for (TreeNode child : childrenWithoutProbability) {
                 child.setProbability(remainder);
                 child.setAccurate(false);
             }
+        }
+        // Проводим операцию взвешивания для потомков
+        for (TreeNode child : children) {
             child.weight();
         }
     }
@@ -94,7 +107,6 @@ public class TreeNode {
                         " [" + 0 + "; " + String.format("%1$,.2f", probability) + "]";
             }
             formulaString += probabilityString;
-            System.out.println(probabilityString);
         }
         return formulaString;
     }

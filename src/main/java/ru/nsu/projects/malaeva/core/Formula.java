@@ -8,7 +8,6 @@ import java.util.Set;
 
 public interface Formula {
     boolean getValue(Map<String, Map<String, Boolean>> atomsValue);
-    // TODO добавить метод проверки констант
     Formula withoutQuantifiers(Set<String> constants, Set<String> specialConstants);
     Formula replaceVariables(String variable, String replacement);
     Set<String> getConstants();

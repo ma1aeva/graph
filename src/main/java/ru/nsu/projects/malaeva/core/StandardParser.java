@@ -14,6 +14,9 @@ public class StandardParser implements Parser {
         this.formulaStack = new Stack<>();
     }
 
+    // Берем операцию, конъюнкцию, например, и видим, что у нее два аргумента.
+    // Затем берем две формулы из соответствующего стека, разворачиваем их (чтобы был правильный порядок),
+    // и помещаем в переданную нам через аргументы операцию.
     private void fillOperationSlots(Operation operation) {
         if (formulaStack.size() < operation.getSlotNumber()) {
             throw new ParseFormulaException("Слишком мало операндов для составления формулы");
@@ -113,10 +116,9 @@ public class StandardParser implements Parser {
 
         // Правила: 1. Пробелы не считаются
         //          2. Чтобы при использовании кванторов, переменная должна отделяться от тела скобками
-        //          3. Квантор - одноместная функция
 
         @Override
-        public Formula parseFormula(java.lang.String formulaString) {
+        public Formula parseFormula(String formulaString) {
 
             // Убираем все пробелы
             char[] formulaCharArray = formulaString.replace(" ", "").toCharArray();
@@ -131,7 +133,7 @@ public class StandardParser implements Parser {
                         throw new ParseFormulaException("Не удаслось распарсить название переменной.");
 
                     Quantifier quantifier = (formulaCharArray[currentIndex] == '∀') ? new AnyQuantifier() : new ExistQuantifier();
-                    java.lang.String variable = new java.lang.String(formulaCharArray, currentIndex + 1, lastVariableNameLength);
+                    String variable = new String(formulaCharArray, currentIndex + 1, lastVariableNameLength);
                     quantifier.setVariableName(variable);
                     processOperation(quantifier);
                     currentIndex += lastVariableNameLength + 1;
@@ -177,8 +179,8 @@ public class StandardParser implements Parser {
                         throw new RuntimeException("Проблема с парсингом предиката, не удалось найти закрывающую скобку");
                     }
 
-                    java.lang.String predicateName = new java.lang.String(formulaCharArray, currentIndex, predicateNameLength);
-                    java.lang.String argumentName = new java.lang.String(formulaCharArray, currentIndex + predicateNameLength + 1, predicateArgumentNameLength);
+                    String predicateName = new String(formulaCharArray, currentIndex, predicateNameLength);
+                    String argumentName = new String(formulaCharArray, currentIndex + predicateNameLength + 1, predicateArgumentNameLength);
                     Predicate predicate = new Predicate(predicateName, argumentName);
                     processAtom(predicate);
                     currentIndex += predicateNameLength + predicateArgumentNameLength + 2;

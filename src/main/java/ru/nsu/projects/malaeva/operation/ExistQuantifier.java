@@ -26,7 +26,6 @@ public class ExistQuantifier extends Quantifier {
             throw new OperationNotSupportedException(" ");
         }
         List<Formula> replacements = getSubformulaVariablesReplacement(constants, specialConstants);
-        System.out.println(replacements);
         //TODO если у нас недостаточно формул
         Formula result = replacements.get(0);
         for (int i = 1; i < replacements.size(); i++) {

@@ -5,7 +5,6 @@ import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxStyleUtils;
-import com.mxgraph.view.mxStylesheet;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -141,6 +140,7 @@ public class MainController {
             System.out.println(selectedDirectory.getAbsolutePath());
 
             new Thread(() -> {
+
                 GraphBuilder graphBuilder = new GraphBuilder();
 
                 Map<Map<String, Set<String>>, Graph<TreeNode, CustomEdge>> graphMap =
@@ -175,11 +175,8 @@ public class MainController {
                         e.printStackTrace();
                     }
                     counter++;
-
-
                 }
             }).start();
-
         }
     }
 

@@ -13,6 +13,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GraphBuilder {
+
+    // Да, это до жопы сложный метод, который возвращает:
+    // разделенную по наборам предикатов модели графов
+    // Зачем это рефакторить, если можно не рефакторить?
     public Map<Map<String, Set<String>>, Graph<TreeNode, CustomEdge>> buildGraph(Parser parser, List<FormulaDTO> formulaDTOList,
                                                   Set<String> specialsConstants) {
 
@@ -91,6 +95,8 @@ public class GraphBuilder {
                 .forEach(head::insertInto);
 
             // Инициализируем граф
+            // Важно: три операции ниже должны быть исполнены именно в этом порядке
+            // Можно отрефакторить, но это уже заботы программиста, который читает это предупреждение
             head.setProbabilityIfPossible();
             head.weight();
             head.initGraph(graph);
