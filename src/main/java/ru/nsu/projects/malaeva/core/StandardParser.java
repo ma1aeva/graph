@@ -36,9 +36,9 @@ public class StandardParser implements Parser {
 
     private void handleClosingBracket(OperationStackItem operationStackItem) {
         try {
-            while (!(operationStack.peek().getStackItemType() == StackItemType.OPENING_BRACKET)) {
+            while (operationStack.peek().getStackItemType() != StackItemType.OPENING_BRACKET) {
                 OperationStackItem betweenBracketsItem = operationStack.pop();
-                if (!(betweenBracketsItem.getStackItemType() == StackItemType.OPERATION)) {
+                if (betweenBracketsItem.getStackItemType() != StackItemType.OPERATION) {
                     throw new ParseFormulaException("Мы встретили что-то отличное от оператора при раскрутке стка из скобок");
                 }
                 fillOperationSlots((Operation) betweenBracketsItem);

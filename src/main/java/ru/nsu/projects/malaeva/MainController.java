@@ -152,9 +152,29 @@ public class MainController {
                     mxIGraphLayout layout = new mxCompactTreeLayout(concreteGraphAdapter, false, false);
                     layout.execute(concreteGraphAdapter.getDefaultParent());
 
+                    concreteGraphAdapter.getCellToVertexMap().forEach((mxICell, treeNode) -> {
+                        String resultStyle = mxICell.getStyle();
+                        if (treeNode.isPrebabilirySetByUser()) {
+                            String mainColor = "B66DFF";
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_STROKECOLOR, "white");
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_LABEL_BACKGROUNDCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_LABEL_BORDERCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_INDICATOR_COLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_SEPARATORCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_SWIMLANE_FILLCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_GRADIENTCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_INDICATOR_GRADIENTCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_FILLCOLOR, mainColor);
+                            resultStyle = mxStyleUtils.setStyle(resultStyle, mxConstants.STYLE_FONTCOLOR, "white");
+                        }
+                        mxICell.setStyle(resultStyle);
+                        }
+                    );
+
                     concreteGraphAdapter.getEdgeToCellMap().forEach(
                             (customEdge, mxICell) -> {
-                                String targetStyle = "";
+
+                                String targetStyle = mxICell.getStyle();
                                 targetStyle = switch (customEdge.getRelation()) {
                                     case CORRECT -> mxStyleUtils.setStyle(targetStyle, mxConstants.STYLE_STROKECOLOR, "green");
                                     case INCORRECT -> mxStyleUtils.setStyle(targetStyle, mxConstants.STYLE_STROKECOLOR, "red");

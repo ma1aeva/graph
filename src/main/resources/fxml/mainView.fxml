@@ -7,7 +7,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane fx:id="pane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.nsu.projects.malaeva.MainController">
+<Pane fx:id="pane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ru.nsu.projects.malaeva.MainController">
   <VBox>
     <VBox fx:id="vbox" alignment="TOP_CENTER">
       <padding>
@@ -33,8 +34,10 @@
        <padding>
            <Insets right="20.0" bottom="20"/>
        </padding>
-          <Button minWidth="34.0" mnemonicParsing="false" style="-fx-background-color: #9191ff;" onAction="#addNewRow" prefHeight="27.0" prefWidth="103.0" text="Add field" />
-          <Button graphicTextGap="5.0" mnemonicParsing="false" onAction="#buildGraph" prefHeight="27.0" prefWidth="106.0" text="Build graph" />
+          <Button minWidth="34.0" mnemonicParsing="false" style="-fx-background-color: #9191ff;" onAction="#addNewRow"
+                  prefHeight="27.0" prefWidth="103.0" text="Add field" />
+          <Button graphicTextGap="5.0" mnemonicParsing="false" onAction="#buildGraph" prefHeight="27.0"
+                  prefWidth="106.0" text="Build graph" />
    </HBox>
   </VBox>
 </Pane>

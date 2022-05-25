@@ -20,6 +20,9 @@ public class TreeNode {
     private boolean isAccurate;
 
     @Getter @Setter
+    private boolean prebabilirySetByUser;
+
+    @Getter @Setter
     private FormulaDTO formulaDTO;
 
     private final Set<MultipleConjunction> multipleConjunctionSet;
@@ -60,6 +63,7 @@ public class TreeNode {
             System.out.println(formulaDTO.getProbability());
             probability = formulaDTO.getProbability();
             isAccurate = true;
+            prebabilirySetByUser = true;
         }
         children.forEach(TreeNode::setProbabilityIfPossible);
     }

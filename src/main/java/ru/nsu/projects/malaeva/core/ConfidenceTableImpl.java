@@ -71,6 +71,7 @@ public class ConfidenceTableImpl implements ConfidenceTable {
         }
     }
 
+
     @Override
     public Set<MultipleConjunction> getSdnfConjunctions() {
         Set<MultipleConjunction> conjunctionList = new HashSet<>();
